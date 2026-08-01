@@ -1,0 +1,17 @@
+/**
+ * SpiceDB Schema for MCP Tool Permissions
+ * 
+ * This schema defines a simple permission model for MCP tools:
+ * - Users can execute tools if they have the execute permission
+ * - Tools can be enabled/disabled by admins
+ */
+
+definition user {}
+
+definition mcp_tool {
+    // Relation to track which users can enable/disable this tool
+    relation enabled: user
+    
+    // Permission to execute this tool
+    permission execute = enabled
+}
