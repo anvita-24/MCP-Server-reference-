@@ -1,19 +1,40 @@
+<div align="center">
+
 # MCP Server Reference Implementations
+
+**Production-grade blueprints for building remote, hosted [Model Context Protocol](https://spec.modelcontextprotocol.io/) servers with Next.js.**
+
+From a five-minute starter to a fully authenticated, permission-aware server — ready to deploy.
 
 [![Deploy Basic](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/anvitanigam/mcp-reference/tree/main/basic)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
-[![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![MCP](https://img.shields.io/badge/MCP-compatible-8A2BE2)](https://spec.modelcontextprotocol.io/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
 
-Reference implementations for building remote, hosted **Model Context Protocol (MCP)** servers with Next.js.
+[Quickstart](#quickstart) · [Live Demo](#demo) · [Architecture](#architecture) · [Deploy](#deploying-to-vercel) · [FAQ](#faq)
 
-This repository contains two production-quality examples: a minimal starter for learning MCP, and a fully featured implementation with authentication, fine-grained authorization, OAuth 2.0, and PostgreSQL.
+</div>
+
+---
+
+## Overview
+
+Building a remote MCP server usually means wiring together protocol handling, authentication, authorization, and deployment from scratch. This repository does that wiring for you, in two flavors:
+
+| | |
+|---|---|
+| **`basic/`** | A minimal starter for learning MCP and prototyping fast |
+| **`with-authorization/`** | A fully featured, production-ready server with auth, permissions, and OAuth 2.0 |
+
+Both are built on Next.js 15 and deploy to Vercel in one click — no boilerplate to write.
 
 ---
 
 ## Table of Contents
 
+- [Overview](#overview)
 - [Why this repository?](#why-this-repository)
 - [Features](#features)
 - [Which implementation should I use?](#which-implementation-should-i-use)
@@ -264,20 +285,35 @@ Any MCP-compatible client can connect, including:
 
 ## FAQ
 
-**Does this support local (stdio) MCP servers?**
-No, both implementations are remote, HTTP-based MCP servers designed for hosting. For a local subprocess server, see the [official MCP TypeScript SDK examples](https://github.com/modelcontextprotocol/typescript-sdk).
+<details>
+<summary><strong>Does this support local (stdio) MCP servers?</strong></summary>
+<br>
+No, both implementations are remote, HTTP-based MCP servers designed for hosting. For a local subprocess server, see the <a href="https://github.com/modelcontextprotocol/typescript-sdk">official MCP TypeScript SDK examples</a>.
+</details>
 
-**Can I deploy this somewhere other than Vercel?**
+<details>
+<summary><strong>Can I deploy this somewhere other than Vercel?</strong></summary>
+<br>
 Yes — both are standard Next.js apps, so any platform that supports Next.js (Railway, Render, Fly.io, self-hosted Node) will work. Vercel is just the fastest path.
+</details>
 
-**Can I use SQLite instead of PostgreSQL in `with-authorization/`?**
+<details>
+<summary><strong>Can I use SQLite instead of PostgreSQL in <code>with-authorization/</code>?</strong></summary>
+<br>
 Better Auth supports SQLite, but this reference implementation is configured for PostgreSQL. You'd need to update the database adapter yourself.
+</details>
 
-**Why SpiceDB instead of a simpler role-based check?**
-SpiceDB gives you fine-grained, relationship-based permissions (Zanzibar-style) that scale better than hardcoded roles once you have real multi-tenant access patterns. For simple cases, a basic role check may be all you need — see `AUTHORIZATION.md` for the tradeoffs.
+<details>
+<summary><strong>Why SpiceDB instead of a simpler role-based check?</strong></summary>
+<br>
+SpiceDB gives you fine-grained, relationship-based permissions (Zanzibar-style) that scale better than hardcoded roles once you have real multi-tenant access patterns. For simple cases, a basic role check may be all you need — see <code>AUTHORIZATION.md</code> for the tradeoffs.
+</details>
 
-**Can I swap out Better Auth for something else (Clerk, Auth0, NextAuth)?**
-Yes, but you'll need to reimplement the session logic that `with-authorization/` wires into the MCP OAuth flow.
+<details>
+<summary><strong>Can I swap out Better Auth for something else (Clerk, Auth0, NextAuth)?</strong></summary>
+<br>
+Yes, but you'll need to reimplement the session logic that <code>with-authorization/</code> wires into the MCP OAuth flow.
+</details>
 
 ## Contributing
 
@@ -294,3 +330,13 @@ Issues and PRs welcome — this is meant as a foundation to build on, so improve
 ## License
 
 Licensed under the [Apache 2.0 License](./LICENSE).
+
+---
+
+<div align="center">
+
+If this saved you some setup time, consider starring the repo — it helps others find it too.
+
+**[Back to top](#mcp-server-reference-implementations)**
+
+</div>
