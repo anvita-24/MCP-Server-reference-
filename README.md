@@ -2,18 +2,18 @@
 
 # MCP Server Reference Implementations
 
-**Production-grade blueprints for building remote, hosted [Model Context Protocol](https://spec.modelcontextprotocol.io/) servers with Next.js.**
+**Production-grade blueprints for building remote, hosted [Model Context Protocol](https://modelcontextprotocol.io/) servers with Next.js.**
 
-From a five-minute starter to a fully authenticated, permission-aware server — ready to deploy.
+From a five-minute starter to a fully authenticated, permission-aware server.
 
-[![Deploy Basic](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/anvitanigam/mcp-reference/tree/main/basic)
+[![Deploy Basic](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/anvita-24/MCP-Server-reference-/tree/main/basic)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![MCP](https://img.shields.io/badge/MCP-compatible-8A2BE2)](https://spec.modelcontextprotocol.io/)
+[![MCP](https://img.shields.io/badge/MCP-compatible-8A2BE2)](https://modelcontextprotocol.io/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
 
-[Quickstart](#quickstart) · [Live Demo](#demo) · [Architecture](#architecture) · [Deploy](#deploying-to-vercel) · [FAQ](#faq)
+[Quickstart](#quickstart) · [Architecture](#architecture) · [Deploy](#deploying-to-vercel) · [FAQ](#faq)
 
 </div>
 
@@ -28,21 +28,20 @@ Building a remote MCP server usually means wiring together protocol handling, au
 | **`basic/`** | A minimal starter for learning MCP and prototyping fast |
 | **`with-authorization/`** | A fully featured, production-ready server with auth, permissions, and OAuth 2.0 |
 
-Both are built on Next.js 15 and deploy to Vercel in one click — no boilerplate to write.
+Both are built on Next.js 15 and are deployable to Vercel. `basic/` deploys in one click; `with-authorization/` also needs a PostgreSQL database, a SpiceDB instance, and environment variables (see [Deploying to Vercel](#deploying-to-vercel)).
 
 ---
 
 ## Table of Contents
 
 - [Overview](#overview)
-- [Why this repository?](#why-this-repository)
 - [Features](#features)
 - [Which implementation should I use?](#which-implementation-should-i-use)
 - [Architecture](#architecture)
 - [Repository structure](#repository-structure)
 - [Prerequisites](#prerequisites)
 - [Quickstart](#quickstart)
-- [Demo](#demo)
+- [Local endpoints](#local-endpoints)
 - [Deploying to Vercel](#deploying-to-vercel)
 - [Testing your server](#testing-your-server)
 - [Supported clients](#supported-clients)
@@ -56,15 +55,6 @@ Both are built on Next.js 15 and deploy to Vercel in one click — no boilerplat
 
 ---
 
-## Why this repository?
-
-Building a remote MCP server usually means wiring together protocol handling, authentication, authorization, and deployment from scratch. This repository does that wiring for you, in two flavors:
-
-- A **minimal starter** for experimenting with MCP and learning the protocol.
-- A **production-ready foundation** with authentication, authorization, and OAuth support, so you have something you could actually ship.
-
-Both are built on Next.js and deploy to Vercel with no extra configuration.
-
 ## Features
 
 - Remote, hosted MCP servers (not local subprocess servers)
@@ -75,7 +65,6 @@ Both are built on Next.js and deploy to Vercel with no extra configuration.
 - Fine-grained authorization using SpiceDB (Zanzibar-style)
 - OAuth 2.0, MCP-spec compliant
 - TypeScript-first throughout
-- One-click deploy to Vercel
 
 ## Which implementation should I use?
 
@@ -169,32 +158,36 @@ Fill in `.env`:
 BETTER_AUTH_SECRET=       # generate with: openssl rand -base64 32
 BETTER_AUTH_URL=http://localhost:3000
 
-PGUSER=
-PGPASSWORD=
+PGUSER=postgres
+PGPASSWORD=postgres
 PGHOST=localhost
 PGPORT=5432
 PGDATABASE=mcp_reference
 
-SPICEDB_ENDPOINT=
-SPICEDB_TOKEN=
+SPICEDB_ENDPOINT=localhost:50051
+SPICEDB_TOKEN=dev-key     # must match --grpc-preshared-key below
 ```
 
 Start Postgres and SpiceDB (Docker example):
 
 ```bash
-docker run -d --name mcp-postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 postgres:16
-docker run -d --name mcp-spicedb -p 50051:50051 authzed/spicedb serve --grpc-preshared-key "dev-key"
+docker run -d --name mcp-postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=mcp_reference \
+  -p 5432:5432 postgres:16
+
+docker run -d --name mcp-spicedb \
+  -p 50051:50051 \
+  authzed/spicedb serve --grpc-preshared-key "dev-key"
 ```
 
-Run any migrations your setup requires, then:
+Run the database migrations and load the SpiceDB schema as described in [`with-authorization/AUTHORIZATION.md`](./with-authorization/AUTHORIZATION.md), then:
 
 ```bash
 npm run dev
 ```
 
-See [`with-authorization/AUTHORIZATION.md`](./with-authorization/AUTHORIZATION.md) for details on the permission model.
-
-## Demo
+## Local endpoints
 
 **`basic/`**
 
@@ -211,22 +204,20 @@ See [`with-authorization/AUTHORIZATION.md`](./with-authorization/AUTHORIZATION.m
 | MCP endpoint | `http://localhost:3000/api/mcp` |
 | Sign-in | `http://localhost:3000/sign-in` |
 
-Once deployed, replace these with your live Vercel URLs, e.g. `https://mcp-reference-basic.vercel.app`.
-
-> **Preview:** add screenshots of the landing page, MCP Inspector session, and (for `with-authorization/`) the sign-in/authorization UI here once your fork is live — a couple of screenshots go a long way for anyone browsing the repo.
+After you deploy, your endpoint will be `https://<your-project>.vercel.app/api/mcp`.
 
 ## Deploying to Vercel
 
-Both apps deploy to [Vercel](https://vercel.com) as-is.
+Both apps are standard Next.js apps and deploy to [Vercel](https://vercel.com).
 
-1. Push your fork to GitHub.
-2. Click **Deploy Basic** at the top of this README, or deploy manually:
+1. Push your repository to GitHub.
+2. For `basic/`, click **Deploy Basic** at the top of this README, or deploy manually:
    ```bash
    npm i -g vercel
    cd basic          # or with-authorization
    vercel --prod
    ```
-3. For `with-authorization/`, add the environment variables from `.env.example` in the Vercel dashboard under **Settings → Environment Variables**.
+3. For `with-authorization/`, first provision PostgreSQL and SpiceDB, then add the environment variables from `.env.example` in the Vercel dashboard under **Settings → Environment Variables**.
 4. In **Project Settings → Root Directory**, set `basic` or `with-authorization` — these are two independent Next.js apps in one repo, not a workspace, so deploy them as separate Vercel projects.
 
 ## Testing your server
@@ -234,11 +225,10 @@ Both apps deploy to [Vercel](https://vercel.com) as-is.
 Use the [MCP Inspector](https://github.com/modelcontextprotocol/inspector) to interact with your server directly:
 
 ```bash
-npm install -g @modelcontextprotocol/inspector
-mcp-inspector http://localhost:3000/api/mcp
+npx @modelcontextprotocol/inspector
 ```
 
-This gives you a web UI to browse tools/resources, run tools with custom inputs, and inspect raw protocol messages — including OAuth flows in `with-authorization/`.
+In the Inspector UI, choose the **Streamable HTTP** transport and enter `http://localhost:3000/api/mcp`. You can browse tools/resources, run tools with custom inputs, and inspect raw protocol messages — including OAuth flows in `with-authorization/`.
 
 ## Supported clients
 
@@ -271,7 +261,7 @@ Any MCP-compatible client can connect, including:
 | Node.js | 20+ |
 | Next.js | 15.x |
 | TypeScript | 5.x |
-| MCP SDK | latest |
+| MCP SDK | see `package.json` |
 
 ## Roadmap
 
@@ -321,22 +311,11 @@ Issues and PRs welcome — this is meant as a foundation to build on, so improve
 
 ## Resources
 
-- [MCP Specification](https://spec.modelcontextprotocol.io/)
-- [MCP Authorization Specification](https://spec.modelcontextprotocol.io/specification/server/authentication/)
+- [MCP Specification](https://modelcontextprotocol.io/specification)
 - [Next.js Documentation](https://nextjs.org/docs)
 - [SpiceDB Documentation](https://authzed.com/docs)
 - [Better Auth Documentation](https://www.better-auth.com/docs)
 
 ## License
 
-Licensed under the [Apache 2.0 License](./LICENSE).
-
----
-
-<div align="center">
-
-If this saved you some setup time, consider starring the repo — it helps others find it too.
-
-**[Back to top](#mcp-server-reference-implementations)**
-
-</div>
+Licensed under the [Apache License 2.0](./LICENSE).
